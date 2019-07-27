@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My first Vue app</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+  <div id="app"> Введите искомый E-Mail:
+    <input v-model="message" v-on:keyup="fetchinfo" placeholder="отредактируй меня">
+	<div>{{ msg }}</div>
+  </div>
+
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        message: 'Hello Vue!',
+		msg: ''
+      },
+	
+	  methods:{
+	  fetchinfo: function(event){
+		axios.post('http://testvue.ru/controller.php', {
+			email: app.message
+		})
+		.then(function (response) {
+			var output = "";
+			for(let i=0;i<response.data.length;i++){
+				console.log(response.data[i]);
+				output += response.data[i][0] + " " + response.data[i]['name'] + " " + 
+				response.data[i]['sname'] + " [id=" + response.data[i]['user_id'] + "] \n";
+			}
+			app.msg = (output !== "")?output:"Записей для email " + app.message + " не обнаружено";
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
+	  }
+	  }
+    })
+  </script>
+</body>
+</html>
